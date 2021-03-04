@@ -1,2 +1,2 @@
 # read_elf
-a toy use for reading ELF
+A toy use for reading ELF written by Rust
