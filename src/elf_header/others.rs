@@ -3,7 +3,7 @@
 
 use std::convert::TryInto;
 use super::e_ident::EIdent;
-use super::util::print_align;
+use crate::util::print_align;
 pub struct ELFHeader {
     e_ident: EIdent,
     e_type: u16,

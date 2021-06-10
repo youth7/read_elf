@@ -1,4 +1,4 @@
-use super::util::print_align;
+use crate::util::print_align;
 pub struct EIdent {
     magic_number: [u8; 4],
     ei_class: u8,
