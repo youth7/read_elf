@@ -1,5 +1,7 @@
 
 mod elf_header;
+mod e_ident;
+mod util;
 use std::fs;
 
 
