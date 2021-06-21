@@ -1,3 +1,8 @@
-int main(void){
-    
+struct A
+{
+    int a;
+    int b;
+};
+int main(void)
+{
 }
