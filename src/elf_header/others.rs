@@ -10,8 +10,18 @@ pub struct ELFHeader {
     e_machine: u16,
     e_version: u32,
     e_entry: u64,
+    e_phoff: u64,
     e_shoff: u64,
+    e_flags:u32,
+    e_ehsize:u16,
+    e_phentsize:u16,
+    e_phnum:u16,
+    e_shentsize:u16,
+    e_shnum:u16,
+    e_shstrndx:u16,
 }
+
+
 
 
 impl ELFHeader {
@@ -22,7 +32,15 @@ impl ELFHeader {
             e_machine: u16::from_le_bytes(bytes[18..=19].try_into().unwrap()),
             e_version: u32::from_le_bytes(bytes[20..=23].try_into().unwrap()),
             e_entry: u64::from_le_bytes(bytes[24..=31].try_into().unwrap()),
+            e_phoff: u64::from_le_bytes(bytes[0x20..=0x27].try_into().unwrap()),
             e_shoff: u64::from_le_bytes(bytes[0x28..=0x2f].try_into().unwrap()),
+            e_flags: u32::from_le_bytes(bytes[0x30..=0x33].try_into().unwrap()),
+            e_ehsize:u16::from_le_bytes(bytes[0x34..=0x35].try_into().unwrap()),
+            e_phentsize:u16::from_le_bytes(bytes[0x36..=0x37].try_into().unwrap()),
+            e_phnum:u16::from_le_bytes(bytes[0x38..=0x39].try_into().unwrap()),
+            e_shentsize:u16::from_le_bytes(bytes[0x3a..=0x3b].try_into().unwrap()),
+            e_shnum:u16::from_le_bytes(bytes[0x3c..=0x3d].try_into().unwrap()),
+            e_shstrndx:u16::from_le_bytes(bytes[0x3e..=0x3f].try_into().unwrap()),
         }
     }
 
@@ -51,7 +69,41 @@ impl ELFHeader {
     }
 
     fn print_shoff(&self){
-        print_align("Start of section headers", &self.e_shoff.to_string());
+        print_align("Start of section headers", self.e_shoff.to_string().as_str());
+    }
+
+    fn print_phoff(&self){
+        print_align("Start of program headers", self.e_phoff.to_string().as_str());
+    }
+
+    fn print_flags(&self){
+        print_align("Flags", self.e_flags.to_string().as_str());
+    }
+
+    fn print_ehsize(&self){
+        print_align("Size of ELF header", self.e_ehsize.to_string().as_str());
+    }
+
+    
+    fn print_phentsize(&self){
+        print_align("Size of program header entry", self.e_phentsize.to_string().as_str());
+    }
+
+    fn print_phnum(&self){
+        print_align("Number of program headers", self.e_phnum.to_string().as_str());
+    }
+
+    fn print_shentsize(&self){
+        print_align("Size of section header entry", self.e_shentsize.to_string().as_str());
+    }
+
+
+    fn print_shnum(&self){
+        print_align("Number of section headers", self.e_shnum.to_string().as_str());
+    }
+
+    fn print_shstrndx(&self){
+        print_align("Section header string table index", self.e_shstrndx.to_string().as_str());
     }
     
     pub fn show_message(&self) {
@@ -60,6 +112,14 @@ impl ELFHeader {
         self.print_machine();
         self.print_version();
         self.print_entry();
+        self.print_phoff();
         self.print_shoff();
+        self.print_flags();
+        self.print_ehsize();
+        self.print_phentsize();
+        self.print_phnum();
+        self.print_shentsize();
+        self.print_shnum();
+        self.print_shstrndx();
     }
 }

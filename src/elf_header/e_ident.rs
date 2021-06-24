@@ -54,7 +54,11 @@ impl EIdent {
     }
 
     fn print_os_abi(&self) {
-        print_align("OS/ABI", self.ei_os_abi.to_string().as_str());
+        let os_abi = match &self.ei_os_abi{
+            0 => format!("System V ({})", 0),
+            v@_ => format!("Others ({})", v)
+        };
+        print_align("OS/ABI", &os_abi);
     }
 
     fn print_os_abi_version(&self) {

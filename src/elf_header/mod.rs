@@ -1,2 +1,3 @@
-pub mod e_ident;
-pub mod others;
+mod e_ident;
+mod others;
+pub use others::ELFHeader;
