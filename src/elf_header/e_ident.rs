@@ -1,3 +1,4 @@
+
 use crate::util::print_align;
 pub struct EIdent {
     magic_number: [u8; 4],
@@ -33,9 +34,8 @@ impl EIdent {
 
     fn print_class(&self) {
         let class = match self.ei_class {
-            1 => "ELF32",
             2 => "ELF64",
-            _ => "未知",
+            _ => panic!("only support 64 bit ELF")
         };
         print_align("Class", &class);
     }

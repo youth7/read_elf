@@ -1,4 +1,4 @@
-use crate::util::print_align;
+use crate::util::get_fixed_length_string;
 use std::{convert::TryInto, usize};
 
 pub struct SectionEntry {
@@ -13,6 +13,8 @@ pub struct SectionEntry {
     pub sh_addralign: u64,
     pub sh_entsize: u64,
 }
+const LENGTH_OF_NAME:usize = 20;
+const LENGTH_OF_TYPE:usize = 10;
 
 impl SectionEntry {
     pub fn new(bytes: &[u8]) -> SectionEntry {
@@ -41,14 +43,11 @@ impl SectionEntry {
             name.push(character as char);
             offset += 1;
         }
-        while name.len()< 20{
-            name.push(' ')
-        }
-        name
+        get_fixed_length_string(&name, LENGTH_OF_NAME)
     }
 
-    fn section_type(&self) -> String {
-        match &self.sh_type {
+    fn interpret_section_type(&self) -> String {
+        let section_type = match &self.sh_type {
             0 => "NULL".to_string(),
             1 => "PROGBITS".to_string(),
             2 => "SYMTAB".to_string(),
@@ -61,24 +60,26 @@ impl SectionEntry {
             9 => "REL".to_string(),
             10 => "SHLIB".to_string(),
             11 => "SHT_DYNSYM".to_string(),
-            v @ _ => format!("{:X}", v),
-        }
+            v @ _ => format!("?{:X}", v),
+        };
+        get_fixed_length_string(&section_type, LENGTH_OF_TYPE)
     }
 
-
     pub fn print_header(){
-        println!("index\tname\tType\tFlags\tAddress\tOffset\tSize\tLink\tInfo\tAlign\tEntSize");
+        let name = get_fixed_length_string("Name", LENGTH_OF_NAME);
+        let section_type = get_fixed_length_string("Type", LENGTH_OF_TYPE);
+        println!("index\t{}\t{}\tFlags\tAddress\tOffset\tSize\tLink\tInfo\tAlign\tEntSize", name, section_type);
     }
     pub fn print(&self, index: usize, section_header_string_table: &[u8]) {
         println!(
             "[{}]\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
             index,
             self.interpret_section_name(section_header_string_table),
-            self.section_type(),
+            self.interpret_section_type(),
             self.sh_flags.to_string().as_str(),
-            self.sh_addr.to_string().as_str(),
-            self.sh_offset.to_string().as_str(),
-            self.sh_size.to_string().as_str(),
+            format!("{:X}", self.sh_addr),
+            format!("{:X}", self.sh_offset),
+            format!("{:X}", self.sh_size),
             self.sh_link.to_string().as_str(),
             self.sh_info.to_string().as_str(),
             self.sh_addralign.to_string().as_str(),
