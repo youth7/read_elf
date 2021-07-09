@@ -13,8 +13,9 @@ pub struct SectionEntry {
     pub sh_addralign: u64,
     pub sh_entsize: u64,
 }
-const LENGTH_OF_NAME:usize = 20;
-const LENGTH_OF_TYPE:usize = 10;
+const LENGTH_OF_NAME: usize = 20;
+const LENGTH_OF_TYPE: usize = 10;
+const LENGTH_OF_FLAGS: usize = 15;
 
 impl SectionEntry {
     pub fn new(bytes: &[u8]) -> SectionEntry {
@@ -65,10 +66,27 @@ impl SectionEntry {
         get_fixed_length_string(&section_type, LENGTH_OF_TYPE)
     }
 
-    pub fn print_header(){
+    fn interpret_section_flags(&self) -> String {
+        let flags = match self.sh_flags {
+            0x1 => "SHF_WRITE".to_string(),
+            0x2 => "SHF_ALLOC".to_string(),
+            0x4 => "SHF_EXECINSTR".to_string(),
+            0x10 => "SHF_MERGE".to_string(),
+            0x20 => "SHF_STRINGS".to_string(),
+            0x40 => "SHF_INFO_LINK".to_string(),
+            v @ _ => format!("?{:X}", v),
+        };
+        get_fixed_length_string(&flags, LENGTH_OF_FLAGS)
+    }
+
+    pub fn print_header() {
         let name = get_fixed_length_string("Name", LENGTH_OF_NAME);
         let section_type = get_fixed_length_string("Type", LENGTH_OF_TYPE);
-        println!("index\t{}\t{}\tFlags\tAddress\tOffset\tSize\tLink\tInfo\tAlign\tEntSize", name, section_type);
+        let flags =  get_fixed_length_string("Flags", LENGTH_OF_FLAGS);
+        println!(
+            "index\t{}\t{}\t{}\tAddress\tOffset\tSize\tLink\tInfo\tAlign\tEntSize",
+            name, section_type, flags
+        );
     }
     pub fn print(&self, index: usize, section_header_string_table: &[u8]) {
         println!(
@@ -76,7 +94,7 @@ impl SectionEntry {
             index,
             self.interpret_section_name(section_header_string_table),
             self.interpret_section_type(),
-            self.sh_flags.to_string().as_str(),
+            self.interpret_section_flags(),
             format!("{:X}", self.sh_addr),
             format!("{:X}", self.sh_offset),
             format!("{:X}", self.sh_size),

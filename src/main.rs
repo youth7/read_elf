@@ -15,6 +15,5 @@ fn main() {
         elf_header.e_shnum as usize,
         elf_header.e_shstrndx as usize,
     );
-    println!("\n");
     section_table.print_section_table();
 }

@@ -35,6 +35,7 @@ impl SectionTable {
         }
     }
     pub fn print_section_table(&self) {
+        print!("\n\n");
         SectionEntry::print_header();
         for (i, entry) in self.entries.iter().enumerate() {
             entry.print(i, self.string_table.as_slice());
